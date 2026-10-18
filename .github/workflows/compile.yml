@@ -16,11 +16,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Cache ESP-IDF
-        uses: actions/cache@v4
-        with:
-          path: ~/.espressif
-          key: esp-idf-v5.3
+      - name: Clear Cache and Config
+        run: |
+          rm -rf build sdkconfig
 
       - name: Install ESP-IDF and Build
         uses: espressif/esp-idf-ci-action@v1
@@ -28,6 +26,7 @@ jobs:
           esp_idf_version: 'v5.3.1'
           target: 'esp32s3'
           path: '.'
+          command: 'idf.py fullclean && idf.py build'
 
       - name: Upload Firmware Artifact
         uses: actions/upload-artifact@v4
