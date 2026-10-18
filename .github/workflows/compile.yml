@@ -1,0 +1,36 @@
+name: Build Firmware
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache ESP-IDF
+        uses: actions/cache@v4
+        with:
+          path: ~/.espressif
+          key: esp-idf-v5.1
+
+      - name: Install ESP-IDF and Build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: 'v5.1.2'
+          target: 'esp32s3'
+          path: '.'
+
+      - name: Upload Firmware Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: esp32s3-jammer-firmware
+          path: build/firmware.bin
